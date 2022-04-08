@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: myapp
+  labels:
+    app: myapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      name: myapp
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: myapp
+          image: nginx
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 80
+              name: http
+          command: ["/bin/sh"]
+          args: ["-c", "while true; do date >> /test/log.txt; sleep 5; done"]    
+          volumeMounts:
+          - name: test
+            mountPath: /test
+      volumes:
+        - name: test
+          emptyDir:
+            {}
